@@ -9,4 +9,5 @@
 *.tfstate.*
 
 # own secret vars store.
+terraform.tfvars
 personal.auto.tfvars
