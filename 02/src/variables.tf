@@ -22,66 +22,22 @@ variable "default_cidr" {
   description = "https://cloud.yandex.ru/docs/vpc/operations/subnet-create"
 }
 
+variable "subnet_cidr_a" {
+  type        = list(string)
+  default     = ["10.0.1.0/24"]
+  description = "CIDR block for subnet in zone A"
+}
+
+variable "subnet_cidr_b" {
+  type        = list(string)
+  default     = ["10.0.2.0/24"]
+  description = "CIDR block for subnet in zone B"
+}
+
 variable "vpc_name" {
   type        = string
   default     = "develop"
   description = "VPC network & subnet name"
-}
-
-# yandex_compute_image vars
-variable "vm_web_image_family" {
-  type        = string
-  default     = "ubuntu-2004-lts"
-  description = "Family of the OS image for the VM (ubuntu-2004-lts, ubuntu-2204-lts)"
-}
-
-# yandex_compute_instance vars
-variable "vm_web_name" {
-  type        = string
-  default     = "netology-develop-platform-web"
-  description = "Name of the web VM instance"
-}
-
-variable "vm_web_platform_id" {
-  type        = string
-  default     = "standard-v3"
-  description = "https://yandex.cloud/ru/docs/compute/concepts/vm-platforms"
-}
-
-variable "vm_web_cores" {
-  type        = number
-  default     = 2
-  description = "https://yandex.cloud/ru/docs/compute/concepts/performance-levels"
-}
-
-variable "vm_web_memory" {
-  type        = number
-  default     = 1
-  description = "https://yandex.cloud/ru/docs/compute/concepts/performance-levels#available-configurations"
-}
-
-variable "vm_web_core_fraction" {
-  type        = number
-  default     = 20
-  description = "https://yandex.cloud/ru/docs/compute/concepts/performance-levels"
-}
-
-variable "vm_web_preemptible" {
-  type        = bool
-  default     = true
-  description = "https://yandex.cloud/ru/docs/compute/concepts/preemptible-vm"
-}
-
-variable "vm_web_nat" {
-  type        = bool
-  default     = true
-  description = "https://yandex.cloud/ru/docs/vpc/concepts/address#public-addresses"
-}
-
-variable "vm_web_serial_port_enable" {
-  type        = number
-  default     = 1
-  description = "https://yandex.cloud/ru/docs/compute/operations/serial-console/"
 }
 
 ###ssh vars
