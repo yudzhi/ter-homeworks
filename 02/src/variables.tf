@@ -1,6 +1,5 @@
 ###cloud vars
 
-
 variable "cloud_id" {
   type        = string
   description = "https://cloud.yandex.ru/docs/resource-manager/operations/cloud/get-id"
@@ -38,6 +37,26 @@ variable "vpc_name" {
   type        = string
   default     = "develop"
   description = "VPC network & subnet name"
+}
+
+### Переменные для именования (общие для всех ВМ)
+
+variable "project_name" {
+  type        = string
+  default     = "netology"
+  description = "Project name prefix for all resources"
+}
+
+variable "environment" {
+  type        = string
+  default     = "develop"
+  description = "Environment: dev, staging, prod"
+}
+
+variable "platform_type" {
+  type        = string
+  default     = "platform"
+  description = "Platform type for resource naming"
 }
 
 ###ssh vars

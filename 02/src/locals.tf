@@ -1,4 +1,24 @@
 locals {
+  # ==========================================
+  # Формирование имён ВМ с интерполяцией
+  # ==========================================
+
+
+  # Можно использовать короткие имена для частого использования
+  /*
+  proj = var.project_name
+  env  = var.environment
+  plat = var.platform_type  
+
+  vm_web_name = "${local.proj}-${local.env}-${local.plat}-${var.vm_web_role}"
+  vm_db_name  = "${local.proj}-${local.env}-${local.plat}-${var.vm_db_role}"
+  */
+  
+  vm_web_name = "${var.project_name}-${var.environment}-${var.platform_type}-${var.vm_web_role}"
+  vm_db_name  = "${var.project_name}-${var.environment}-${var.platform_type}-${var.vm_db_role}"
+  
+
+
   # Список всех ВМ
   all_vms = [
     yandex_compute_instance.platform_web,

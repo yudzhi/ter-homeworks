@@ -1,4 +1,12 @@
-###VM web variables
+### ===================
+### VM web variables
+### ===================
+variable "vm_web_role" {
+  type        = string
+  default     = "web"
+  description = "Role of the web VM (used in naming)"
+}
+
 
 ### yandex_compute_image vars
 variable "vm_web_image_family" {
@@ -8,11 +16,13 @@ variable "vm_web_image_family" {
 }
 
 ### yandex_compute_instance vars
+/*
 variable "vm_web_name" {
   type        = string
   default     = "netology-develop-platform-web"
   description = "Name of the web VM instance"
 }
+*/
 
 variable "vm_web_platform_id" {
   type        = string
@@ -62,8 +72,15 @@ variable "vm_web_zone" {
   default     = "ru-central1-a"
   description = "https://yandex.cloud/ru/docs/overview/concepts/geo-scope"
 }
+### ==========================
+### VM db variables
+### ==========================
 
-###VM db variables
+variable "vm_db_role" {
+  type        = string
+  default     = "db"
+  description = "Role of the database VM (used in naming)"
+}
 
 ### yandex_compute_image vars
 # Family of the OS image for the DB VM (ubuntu-2004-lts, ubuntu-2204-lts)
@@ -74,12 +91,15 @@ variable "vm_db_image_family" {
 }
 
 ### yandex_compute_instance vars
+
+/*
 # Name of the database VM instance
 variable "vm_db_name" {
   type        = string
   default     = "netology-develop-platform-db"
   description = "Name of the web VM instance"
 }
+*/
 
 # Platform ID for the DB VM (standard-v4a, standard-v3)
 variable "vm_db_platform_id" {
