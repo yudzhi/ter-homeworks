@@ -6,6 +6,9 @@ locals {
 
   # Можно использовать короткие имена для частого использования
   /*
+  web_resources = var.vms_resources["web"]
+  db_resources  = var.vms_resources["db"]
+  
   proj = var.project_name
   env  = var.environment
   plat = var.platform_type  
@@ -46,4 +49,9 @@ locals {
     zone => local.zone_cidr_map[zone]
   }
 
+  # Формируем metadata с подстановкой SSH-ключа
+  vm_metadata = {
+    serial-port-enable = var.metadata["serial-port-enable"]
+    ssh-keys           = "ubuntu:${var.vms_ssh_root_key}"
+  }
 }

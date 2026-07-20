@@ -1,3 +1,29 @@
+### ==========================================
+### MAP VARIABLE FOR VM RESOURCES
+### ==========================================
+
+variable "vms_resources" {
+  description = "Resource configurations for all VMs"
+  type = map(object({
+    cores         = number
+    memory        = number
+    core_fraction = number
+  }))
+  default = {
+    web = {
+      cores         = 2
+      memory        = 1
+      core_fraction = 20
+    }
+    db = {
+      cores         = 2
+      memory        = 2
+      core_fraction = 20
+    }
+  }
+}
+
+
 ### ===================
 ### VM web variables
 ### ===================
@@ -30,6 +56,11 @@ variable "vm_web_platform_id" {
   description = "https://yandex.cloud/ru/docs/compute/concepts/vm-platforms"
 }
 
+### ==========================================
+### ОТДЕЛЬНЫЕ ПЕРЕМЕННЫЕ ДЛЯ РЕСУРСОВ (ЗАКОММЕНТИРОВАНЫ)
+### Теперь используются в vms_resources
+### ==========================================
+/*
 variable "vm_web_cores" {
   type        = number
   default     = 2
@@ -47,6 +78,7 @@ variable "vm_web_core_fraction" {
   default     = 20
   description = "https://yandex.cloud/ru/docs/compute/concepts/performance-levels"
 }
+*/
 
 variable "vm_web_preemptible" {
   type        = bool
@@ -60,11 +92,17 @@ variable "vm_web_nat" {
   description = "https://yandex.cloud/ru/docs/vpc/concepts/address#public-addresses"
 }
 
+### ==========================================
+### ОТДЕЛЬНЫЕ ПЕРЕМЕННЫЕ ДЛЯ METADATA (ЗАКОММЕНТИРОВАНЫ)
+### Теперь используется переменная metadata
+### ==========================================
+/*
 variable "vm_web_serial_port_enable" {
   type        = number
   default     = 1
   description = "https://yandex.cloud/ru/docs/compute/operations/serial-console/"
 }
+*/
 
 # Availability zone for the web VM
 variable "vm_web_zone" {
@@ -108,6 +146,11 @@ variable "vm_db_platform_id" {
   description = "https://yandex.cloud/ru/docs/compute/concepts/vm-platforms"
 }
 
+### ==========================================
+### ОТДЕЛЬНЫЕ ПЕРЕМЕННЫЕ ДЛЯ РЕСУРСОВ (ЗАКОММЕНТИРОВАНЫ)
+### Теперь используются в vms_resources
+### ==========================================
+/*
 # Number of CPU cores for the DB VM
 variable "vm_db_cores" {
   type        = number
@@ -128,6 +171,7 @@ variable "vm_db_core_fraction" {
   default     = 20
   description = "https://yandex.cloud/ru/docs/compute/concepts/performance-levels"
 }
+*/
 
 # Whether the DB VM should be preemptible (cheaper but can be terminated anytime)
 variable "vm_db_preemptible" {
@@ -142,13 +186,18 @@ variable "vm_db_nat" {
   default     = true
   description = "https://yandex.cloud/ru/docs/vpc/concepts/address#public-addresses"
 }
-
+### ==========================================
+### ОТДЕЛЬНЫЕ ПЕРЕМЕННЫЕ ДЛЯ METADATA (ЗАКОММЕНТИРОВАНЫ)
+### Теперь используется переменная metadata
+### ==========================================
+/*
 # Enable serial port access for DB VM (1 - enabled, 0 - disabled)
 variable "vm_db_serial_port_enable" {
   type        = number
   default     = 1
   description = "https://yandex.cloud/ru/docs/compute/operations/serial-console/"
 }
+*/
 
 # Availability zone for the database VM
 variable "vm_db_zone" {
