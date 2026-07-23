@@ -19,7 +19,7 @@ resource "yandex_vpc_subnet" "develop" {
   zone           = each.key
   network_id     = yandex_vpc_network.develop.id
   v4_cidr_blocks = local.subnet_cidrs[each.key]
-
+  route_table_id = yandex_vpc_route_table.nat_route_table.id
 }
 
 ### Первая ВМ - web
@@ -87,4 +87,30 @@ resource "yandex_compute_instance" "platform_db" {
 
   metadata = local.vm_metadata
 
+}
+
+### ===============================
+### Настройка NAT-шлюза
+### ===============================
+
+# 1. Data-источник для получения информации о сети
+data "yandex_vpc_network" "develop" {
+  name = var.vpc_name
+}
+
+# 2. Ресурс самого NAT-шлюза
+resource "yandex_vpc_gateway" "nat_gateway" {
+  name = "nat-gateway"
+  shared_egress_gateway {} # Пустой блок, обозначающий тип шлюза
+}
+
+# 3. Ресурс таблицы маршрутизации
+resource "yandex_vpc_route_table" "nat_route_table" {
+  name       = "nat-route-table"
+  network_id = data.yandex_vpc_network.develop.id
+
+  static_route {
+    destination_prefix = "0.0.0.0/0" # Весь трафик в интернет
+    gateway_id         = yandex_vpc_gateway.nat_gateway.id # Идёт через наш шлюз
+  }
 }
