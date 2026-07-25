@@ -1,8 +1,11 @@
 ###cloud vars
+
+/* С 1 июня 2026 года сервис аутентификации не принимает новые OAuth‑токены
 variable "token" {
   type        = string
   description = "OAuth-token; https://cloud.yandex.ru/docs/iam/concepts/authorization/oauth-token"
 }
+*/
 
 variable "cloud_id" {
   type        = string
