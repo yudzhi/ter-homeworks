@@ -33,3 +33,28 @@ variable "vpc_name" {
   default     = "develop"
   description = "VPC network&subnet name"
 }
+### ==========================================
+### SSH VARIABLE
+### ==========================================
+
+variable "vms_ssh_root_key" {
+  type        = string
+  default     = null # переопределяется в personal.auto.tfvars
+  description = "ssh-keygen -t ed25519"
+}
+
+### ==========================================
+### MAP VARIABLE FOR METADATA
+### ==========================================
+
+variable "metadata" {
+  description = "Common metadata for all VM instances"
+  type = object({
+    serial-port-enable = number
+    ssh-keys           = string
+  })
+  default = {
+    serial-port-enable = 1
+    ssh-keys           = null  # переопределяется через locals
+  }
+}
