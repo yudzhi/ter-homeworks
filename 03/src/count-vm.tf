@@ -7,7 +7,7 @@ data "yandex_compute_image" "ubuntu_web" {
 }
 
 resource "yandex_compute_instance" "web" {
-  count = var.web_servers.count
+  count       = var.web_servers.count
   name        = "${var.web_servers.name_prefix}-${count.index + 1}"
   platform_id = var.vm_common_params.platform_id
   zone        = var.vm_common_params.zone

@@ -55,6 +55,7 @@ variable "metadata" {
   })
   default = {
     serial-port-enable = 1
-    ssh-keys           = null  # переопределяется через locals
+    ssh-keys           = null # переопределяется через locals
   }
 }
+

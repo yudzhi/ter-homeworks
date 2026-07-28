@@ -1,6 +1,6 @@
 locals {
   ssh_public_key = file(var.vm_common_params.ssh_public_key_path)
-  
+
   # Формируем metadata с подстановкой SSH-ключа
   vm_metadata = {
     serial-port-enable = var.metadata["serial-port-enable"]

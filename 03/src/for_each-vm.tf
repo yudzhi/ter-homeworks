@@ -12,7 +12,7 @@ resource "yandex_compute_instance" "db" {
   name        = "db-${each.key}"
   platform_id = var.vm_common_params.platform_id
   zone        = var.vm_common_params.zone
-  
+
   resources {
     cores         = each.value.cpu
     memory        = each.value.ram
