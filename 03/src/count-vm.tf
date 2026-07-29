@@ -36,7 +36,10 @@ resource "yandex_compute_instance" "web" {
     nat                = var.web_servers.enable_nat
   }
 
-  metadata = local.vm_metadata
+  #   metadata = local.vm_metadata
+  metadata = merge(local.vm_metadata, {
+    hostname = "${var.web_servers.name_prefix}-${count.index + 1}"
+  })
 
   depends_on = [
     yandex_compute_instance.db

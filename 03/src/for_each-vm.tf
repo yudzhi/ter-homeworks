@@ -37,6 +37,8 @@ resource "yandex_compute_instance" "db" {
     nat                = lookup(each.value, "enable_nat", true)
   }
 
-  metadata = local.vm_metadata
-
+  # metadata = local.vm_metadata
+  metadata = merge(local.vm_metadata, {
+    hostname = "db-${each.key}"
+  })
 }

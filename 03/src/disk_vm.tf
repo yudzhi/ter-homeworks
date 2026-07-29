@@ -61,7 +61,10 @@ resource "yandex_compute_instance" "storage" {
     nat                = true
   }
 
-  metadata = local.vm_metadata
+  #   metadata = local.vm_metadata
+  metadata = merge(local.vm_metadata, {
+    hostname = "storage"
+  })
 
   depends_on = [
     yandex_compute_disk.storage # Явно ждём создания дисков
