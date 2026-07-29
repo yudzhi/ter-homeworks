@@ -1,0 +1,43 @@
+[webservers]
+
+%{~ for i in webservers ~}
+
+${i["name"]}   ansible_host=${i["network_interface"][0]["nat_ip_address"]}
+%{~ endfor ~}
+
+cat > src/hosts.tftpl << 'EOF'
+# ============================================
+# ANSIBLE INVENTORY ФАЙЛ
+# ============================================
+
+# --------------------------------------------
+# ГРУППА: Веб-серверы 
+# --------------------------------------------
+[webservers]
+%{~ for vm in webservers ~}
+${vm.name} ansible_host=${vm.network_interface.0.nat_ip_address} fqdn=${vm.fqdn}
+%{~ endfor ~}
+
+# --------------------------------------------
+# ГРУППА: Базы данных
+# --------------------------------------------
+[databases]
+%{~ for vm in databases ~}
+${vm.name} ansible_host=${vm.network_interface.0.nat_ip_address} fqdn=${vm.fqdn}
+%{~ endfor ~}
+
+# --------------------------------------------
+# ГРУППА: Storage
+# --------------------------------------------
+[storage]
+%{~ for vm in storage ~}
+${vm.name} ansible_host=${vm.network_interface.0.nat_ip_address} fqdn=${vm.fqdn}
+%{~ endfor ~}
+
+# --------------------------------------------
+# ОБЩИЕ ПЕРЕМЕННЫЕ ДЛЯ ВСЕХ ХОСТОВ
+# --------------------------------------------
+[all:vars]
+ansible_user=ubuntu
+ansible_ssh_private_key_file=~/.ssh/id_ed25519
+host_key_checking=False
