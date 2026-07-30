@@ -12,7 +12,7 @@ locals {
   # Поля: name, nat_ip, fqdn
 
   # Группа веб-серверов (из count-vm.tf)
-  webservers = [
+  web_servers = [
     for instance in yandex_compute_instance.web : {
       name   = instance.name
       nat_ip = instance.network_interface.0.nat_ip_address
@@ -21,7 +21,7 @@ locals {
   ]
 
   # Группа баз данных (из for_each-vm.tf)
-  databases = [
+  database_servers = [
     for instance in yandex_compute_instance.db : {
       name   = instance.name
       nat_ip = instance.network_interface.0.nat_ip_address
@@ -30,26 +30,28 @@ locals {
   ]
 
   # Группа storage (из disk_vm.tf)
-  storage = [
+  storage_servers = [
     for instance in [yandex_compute_instance.storage] : {
       name   = instance.name
       nat_ip = instance.network_interface.0.nat_ip_address
       fqdn   = instance.fqdn
     }
   ]
+  # Генерация inventory из шаблона
+  # Сохранено в переменную для реализации обновления
+  inventory_content = templatefile("${path.module}/hosts.tftpl", {
+    webservers = local.web_servers
+    databases  = local.database_servers
+    storage    = local.storage_servers
+  })
 }
 
 # --------------------------------------------
-# ГЕНЕРАЦИЯ INVENTORY ИЗ ШАБЛОНА
+# Создание inventory-файла
 # --------------------------------------------
 
 resource "local_file" "ansible_inventory" {
-  content = templatefile("${path.module}/hosts.tftpl", {
-    webservers = local.webservers
-    databases  = local.databases
-    storage    = local.storage
-  })
-
+  content  = local.inventory_content
   filename = "${abspath(path.module)}/inventory.ini"
 }
 
@@ -66,11 +68,17 @@ resource "terraform_data" "inventory_trigger" {
     db_instances      = join(",", [for vm in yandex_compute_instance.db : vm.id])
     storage_instance  = yandex_compute_instance.storage.id
     template_checksum = filemd5("${path.module}/hosts.tftpl")
+    inventory_content = local.inventory_content
   }
 
   # Пересоздаём inventory-файл при срабатывании триггеров
   provisioner "local-exec" {
-    command = "echo 'Inventory updated at $(date)' > ${abspath(path.module)}/inventory-update.log"
+    command = <<-EOT
+      cat > ${abspath(path.module)}/inventory.ini << 'INVENTORY'
+${local.inventory_content}
+INVENTORY
+      echo "Inventory updated at $(date)" >> ${abspath(path.module)}/inventory-update.log
+    EOT
   }
 }
 
@@ -91,10 +99,10 @@ output "inventory_content" {
 
 output "web_servers_count" {
   description = "Количество веб-серверов"
-  value       = length(local.webservers)
+  value       = length(local.web_servers)
 }
 
 output "database_servers_count" {
   description = "Количество серверов БД"
-  value       = length(local.databases)
+  value       = length(local.database_servers)
 }
