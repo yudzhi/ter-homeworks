@@ -5,7 +5,7 @@
 
 locals {
   # Получаем CIDR из созданного ресурса подсети
-  subnet_cidr = yandex_vpc_subnet.develop.v4_cidr_blocks
+  # subnet_cidr = yandex_vpc_subnet.develop.v4_cidr_blocks
 
   # Базовые правила, которые нужны всегда
   ingress_rules_always = [
@@ -39,7 +39,7 @@ locals {
     {
       protocol       = "TCP"
       description    = "SSH доступ из приватной подсети (через bastion)"
-      v4_cidr_blocks = local.subnet.cidr
+      v4_cidr_blocks = yandex_vpc_subnet.develop.v4_cidr_blocks
       port           = 22
     }
   ]
