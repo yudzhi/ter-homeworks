@@ -1,0 +1,129 @@
+---
+- name: "Настройка веб-серверов"
+  gather_facts: false
+  hosts: webservers
+  vars:
+    ansible_ssh_user: ubuntu
+  become: yes
+
+  pre_tasks:
+    - name: "Ожидание доступности SSH (порт 22)"
+      wait_for:
+        host: '{{ (ansible_ssh_host|default(ansible_host))|default(inventory_hostname) }}'
+        port: 22
+        delay: 5
+        timeout: 300
+        state: started
+        search_regex: OpenSSH
+      delegate_to: localhost # Ansible выполняет задачу на локальной машине
+
+    - name: "Дополнительная задержка для завершения cloud-init"
+      pause:
+        seconds: 10
+
+  tasks:
+    # Сохранение секрета для конкретной ВМ
+    - name: save own secret
+      copy:
+        dest: /tmp/own.pass
+        content: "{{ secrets[inventory_hostname] }}"
+      when: secrets[inventory_hostname] is defined
+
+    # Сохранение всех секретов
+    - name: "Сохранение всех секретов"
+      copy:
+        dest: /tmp/all.pass
+        content: "{{ secrets }}"
+      when: secrets is defined
+
+    # Установка Nginx 
+    # - name: Install Nginx Web Server on Debian Family
+    #   apt:
+    #     name:
+    #       - nginx
+    #       - jq
+    #     state: latest
+    #     update_cache: yes
+
+---
+- name: "Настройка баз данных"
+  gather_facts: false
+  hosts: databases
+  vars:
+    ansible_ssh_user: ubuntu
+  become: yes
+
+  pre_tasks:
+    - name: "Ожидание доступности SSH (порт 22)"
+      wait_for:
+        host: '{{ (ansible_ssh_host|default(ansible_host))|default(inventory_hostname) }}'
+        port: 22
+        delay: 5
+        timeout: 300
+        state: started
+        search_regex: OpenSSH
+      delegate_to: localhost
+
+  tasks:
+    - name: "Сохранение собственного секрета"
+      copy:
+        dest: /tmp/own.pass
+        content: "{{ secrets[inventory_hostname] }}"
+      when: secrets[inventory_hostname] is defined
+
+    - name: "Сохранение всех секретов"
+      copy:
+        dest: /tmp/all.pass
+        content: "{{ secrets }}"
+      when: secrets is defined
+
+    # Установка PostgreSQL 
+    # - name: "Установка PostgreSQL Database"
+    #   apt:
+    #     name:
+    #       - postgresql
+    #       - postgresql-contrib
+    #     state: latest
+    #     update_cache: yes
+
+---
+- name: "Настройка storage"
+  gather_facts: false
+  hosts: storage
+  vars:
+    ansible_ssh_user: ubuntu
+  become: yes
+
+  pre_tasks:
+    - name: "Ожидание доступности SSH (порт 22)"
+      wait_for:
+        host: '{{ (ansible_ssh_host|default(ansible_host))|default(inventory_hostname) }}'
+        port: 22
+        delay: 5
+        timeout: 300
+        state: started
+        search_regex: OpenSSH
+      delegate_to: localhost
+
+  tasks:
+    - name: "Сохранение собственного секрета"
+      copy:
+        dest: /tmp/own.pass
+        content: "{{ secrets[inventory_hostname] }}"
+      when: secrets[inventory_hostname] is defined
+
+    - name: "Сохранение всех секретов"
+      copy:
+        dest: /tmp/all.pass
+        content: "{{ secrets }}"
+      when: secrets is defined
+
+    # Установка утилит для дисков 
+    # - name: "Установка утилит для работы с дисками"
+    #   apt:
+    #     name:
+    #       - lvm2
+    #       - xfsprogs
+    #       - parted
+    #     state: latest
+    #     update_cache: yes

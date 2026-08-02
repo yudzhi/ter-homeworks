@@ -34,7 +34,7 @@ resource "yandex_compute_instance" "db" {
   network_interface {
     subnet_id          = yandex_vpc_subnet.develop.id
     security_group_ids = [yandex_vpc_security_group.example.id]
-    nat                = lookup(each.value, "enable_nat", true)
+    nat                = var.enable_nat_for_vms # (each.value, "enable_nat", true)
   }
 
   # metadata = local.vm_metadata

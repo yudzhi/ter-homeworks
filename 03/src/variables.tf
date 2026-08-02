@@ -59,3 +59,71 @@ variable "metadata" {
   }
 }
 
+# --------------------------------------------
+# ПРАВИЛА ГРУППЫ БЕЗОПАСНОСТИ С BASTION
+# --------------------------------------------
+
+variable "security_group_name" {
+  description = "Имя группы безопасности"
+  type        = string
+  default     = "example_dynamic"
+}
+
+variable "security_group_ingress_rules" {
+  description = "Правила входящего трафика для группы безопасности"
+  type = list(object({
+    protocol       = string
+    description    = string
+    v4_cidr_blocks = list(string)
+    port           = optional(number)
+    from_port      = optional(number)
+    to_port        = optional(number)
+  }))
+  default = [
+    {
+      protocol       = "TCP"
+      description    = "SSH доступ (с любого IP для bastion)"
+      v4_cidr_blocks = ["0.0.0.0/0"]
+      port           = 22
+    },
+    {
+      protocol       = "TCP"
+      description    = "HTTP доступ"
+      v4_cidr_blocks = ["0.0.0.0/0"]
+      port           = 80
+    },
+    {
+      protocol       = "TCP"
+      description    = "HTTPS доступ"
+      v4_cidr_blocks = ["0.0.0.0/0"]
+      port           = 443
+    },
+    {
+      protocol       = "TCP"
+      description    = "Внутренний SSH (из подсети для доступа через bastion)"
+      v4_cidr_blocks = ["10.0.1.0/24"]
+      port           = 22
+    }
+  ]
+}
+
+variable "security_group_egress_rules" {
+  description = "Правила исходящего трафика для группы безопасности"
+  type = list(object({
+    protocol       = string
+    description    = string
+    v4_cidr_blocks = list(string)
+    port           = optional(number)
+    from_port      = optional(number)
+    to_port        = optional(number)
+  }))
+  default = [
+    {
+      protocol       = "TCP"
+      description    = "Разрешить весь исходящий трафик"
+      v4_cidr_blocks = ["0.0.0.0/0"]
+      from_port      = 0
+      to_port        = 65535
+    }
+  ]
+}

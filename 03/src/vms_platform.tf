@@ -27,6 +27,22 @@ variable "vm_common_params" {
 }
 
 # --------------------------------------------
+# Настройка NAT (внешнего IP) для ВМ
+# --------------------------------------------
+
+variable "enable_nat_for_vms" {
+  description = "Включать ли NAT (внешний IP) для обычных ВМ"
+  type        = bool
+  default     = false
+}
+
+variable "enable_nat_for_bastion" {
+  description = "Включать ли NAT для bastion-сервера"
+  type        = bool
+  default     = true
+}
+
+# --------------------------------------------
 # Параметры веб-серверов (используют count)
 # --------------------------------------------
 
@@ -116,6 +132,7 @@ variable "storage_disks" {
 variable "storage_vm" {
   description = "Параметры для storage ВМ"
   type = object({
+    storage_name   = string
     cpu            = number
     ram            = number
     boot_disk_type = string
@@ -123,10 +140,47 @@ variable "storage_vm" {
     enable_nat     = bool
   })
   default = {
+    storage_name   = "storage"
     cpu            = 2
     ram            = 2
     boot_disk_type = "network-hdd"
     disk_size      = 20
     enable_nat     = true
   }
+}
+
+# --------------------------------------------
+# Параметры bastion ВМ
+# --------------------------------------------
+
+variable "bastion" {
+  description = "Параметры bastion-сервера"
+  type = object({
+    enable         = bool # bool => count=1, false => count=0
+    name           = string
+    cpu            = number
+    ram            = number
+    boot_disk_type = string
+    disk_size      = number
+    enable_nat     = bool
+  })
+  default = {
+    enable         = true
+    name           = "bastion"
+    cpu            = 2
+    ram            = 2
+    boot_disk_type = "network-hdd"
+    disk_size      = 20
+    enable_nat     = true
+  }
+}
+
+# ============================================
+# Применение Ansible playbook
+# ============================================
+
+variable "run_ansible" {
+  description = "Запускать ли Ansible playbook"
+  type        = bool
+  default     = true
 }

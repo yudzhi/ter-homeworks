@@ -2,34 +2,40 @@
 # ANSIBLE INVENTORY ФАЙЛ
 # ============================================
 
-# --------------------------------------------
-# ГРУППА: Веб-серверы 
-# --------------------------------------------
 [webservers]
 %{ for vm in webservers ~}
-${vm.name} ansible_host=${vm.nat_ip} fqdn=${vm.fqdn}
-%{~ endfor ~}
+${vm.name} ansible_host=${vm.ansible_host} fqdn=${vm.fqdn}
+%{ endfor ~}
 
-# --------------------------------------------
-# ГРУППА: Базы данных
-# --------------------------------------------
 [databases]
 %{ for vm in databases ~}
-${vm.name} ansible_host=${vm.nat_ip} fqdn=${vm.fqdn}
-%{~ endfor ~}
+${vm.name} ansible_host=${vm.ansible_host} fqdn=${vm.fqdn}
+%{ endfor ~}
 
-# --------------------------------------------
-# ГРУППА: Storage
-# --------------------------------------------
 [storage]
 %{ for vm in storage ~}
-${vm.name} ansible_host=${vm.nat_ip} fqdn=${vm.fqdn}
-%{~ endfor ~}
+${vm.name} ansible_host=${vm.ansible_host} fqdn=${vm.fqdn}
+%{ endfor ~}
 
-# --------------------------------------------
-# ОБЩИЕ ПЕРЕМЕННЫЕ ДЛЯ ВСЕХ ХОСТОВ
-# --------------------------------------------
+[bastion]
+%{ for vm in bastion ~}
+${vm.name} ansible_host=${vm.ansible_host} fqdn=${vm.fqdn}
+%{ endfor ~}
+
 [all:vars]
 ansible_user=ubuntu
 ansible_ssh_private_key_file=~/.ssh/id_ed25519
 host_key_checking=False
+ansible_python_interpreter=/usr/bin/python3
+
+# Proxy через bastion (если есть)
+%{ if length(bastion) > 0 }
+[webservers:vars]
+ansible_ssh_common_args='-o ProxyCommand="ssh -W %h:%p -q ubuntu@${bastion[0].ansible_host}"'
+
+[databases:vars]
+ansible_ssh_common_args='-o ProxyCommand="ssh -W %h:%p -q ubuntu@${bastion[0].ansible_host}"'
+
+[storage:vars]
+ansible_ssh_common_args='-o ProxyCommand="ssh -W %h:%p -q ubuntu@${bastion[0].ansible_host}"'
+%{ endif }

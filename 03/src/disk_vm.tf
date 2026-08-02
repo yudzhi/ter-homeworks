@@ -22,7 +22,7 @@ data "yandex_compute_image" "ubuntu_storage" {
 }
 
 resource "yandex_compute_instance" "storage" {
-  name        = "storage"
+  name        = var.storage_vm.storage_name
   platform_id = var.vm_common_params.platform_id
   zone        = var.vm_common_params.zone
 
@@ -58,7 +58,7 @@ resource "yandex_compute_instance" "storage" {
   network_interface {
     subnet_id          = yandex_vpc_subnet.develop.id
     security_group_ids = [yandex_vpc_security_group.example.id]
-    nat                = true
+    nat                = var.enable_nat_for_vms
   }
 
   #   metadata = local.vm_metadata
@@ -71,36 +71,4 @@ resource "yandex_compute_instance" "storage" {
   ]
 }
 
-# --------------------------------------------
-# Вывод информации о дисках
-# --------------------------------------------
 
-output "storage_disks_info" {
-  description = "Информация о созданных дополнительных дисках"
-  value = {
-    for idx, disk in yandex_compute_disk.storage :
-    disk.name => {
-      id   = disk.id
-      size = disk.size
-      type = disk.type
-    }
-  }
-}
-
-output "storage_vm_ip" {
-  description = "IP-адрес storage ВМ"
-  value       = yandex_compute_instance.storage.network_interface.0.nat_ip_address
-}
-
-output "storage_vm_name" {
-  description = "Имя storage ВМ"
-  value       = yandex_compute_instance.storage.name
-}
-
-output "storage_disks_attached" {
-  description = "ID подключённых к storage ВМ дисков"
-  value = [
-    for disk in yandex_compute_instance.storage.secondary_disk :
-    disk.disk_id
-  ]
-}
